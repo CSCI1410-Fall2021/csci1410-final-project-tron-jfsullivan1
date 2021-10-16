@@ -19,8 +19,24 @@ class StudentBot:
         To get started, you can get the current
         state by calling asp.get_start_state()
         """
-        return "U"
-    
+        state = asp.get_start_state()
+        locs = state.player_locs
+        board = state.board
+        ptm = state.ptm
+        loc = locs[ptm]
+        possibilities = list(TronProblem.get_safe_actions(board, loc))
+        if not possibilities:
+            return "L"
+        best_move = possibilities[0]
+        most_moves = -1
+        for move in possibilities:
+            next_loc = TronProblem.move(loc, move)
+            if len(TronProblem.get_safe_actions(board, next_loc)) <= 2:
+                if len(TronProblem.get_safe_actions(board, next_loc)) > most_moves:
+                    best_move = move
+                    most_moves = len(TronProblem.get_safe_actions(board, next_loc))
+        return best_move
+
     def cleanup(self):
         """
         Input: None
