@@ -11,8 +11,36 @@ import random, math
 class StudentBot:
     """ Write your student bot here"""
 
-    def heuristic_func():
-        return 0
+    def heuristic_func(self, state):
+        player_symbol = str(state.player_to_move() + 1)
+        opp_symbol = '0'
+        if player_symbol == '1':
+            opp_symbol = '2'
+        else:
+            opp_symbol = '1'
+
+        score = 0 # number of squares for the player
+
+        board = state.board
+        board_arr = np.array(board)
+        index_player = np.where(board_arr == player_symbol)
+        index_opp = np.where(board_arr == opp_symbol)
+        shape = np.shape(board_arr)
+        rows = shape[0]
+        cols = shape[1]
+
+
+
+        for row in range(rows):
+            for col in range(cols):
+                current_square = board_arr[row, col]
+                if current_square == ' ':
+                    dist_to_player = abs(row - index_player[0]) + abs(col - index_player[1])
+                    dist_to_opp = abs(row - index_opp[0]) + abs(col - index_opp[1])
+                    if dist_to_player > dist_to_opp:
+                        score += 1
+
+        return score
 
     def decide(self, asp):
         """
@@ -22,7 +50,7 @@ class StudentBot:
         To get started, you can get the current
         state by calling asp.get_start_state()
         """
-    
+
         #locs = state.player_locs
         #board = state.board
         #ptm = state.ptm
@@ -38,7 +66,8 @@ class StudentBot:
               #  if len(TronProblem.get_safe_actions(board, next_loc)) > most_moves:
                #     best_move = move
                 #    most_moves = len(TronProblem.get_safe_actions(board, next_loc))
-        best_move = self.alpha_beta_cutoff(asp, 4, self.heuristic_func)
+
+        best_move = self.alpha_beta_cutoff(asp, 6, self.heuristic_func)
         return best_move
 
     def cleanup(self):
@@ -53,6 +82,7 @@ class StudentBot:
         turns_elapsed counter to zero). If you don't need it,
         feel free to leave it as "pass"
         """
+
         pass
 
     def alpha_beta_cutoff(self, asp, cutoff_ply, heuristic_func):
@@ -66,16 +96,15 @@ class StudentBot:
             we provide does not handle terminal states, so evaluate terminal
             states the same way you evaluated them in the previous algorithms.
         '''
+
         start = asp.get_start_state()
         _, move = self.max_ab_cutoff(asp, start, -math.inf, math.inf, cutoff_ply, heuristic_func)
         return move
 
-    def max_ab_cutoff(self, asp, 
-                      state, alpha, 
-                      beta, ply, heuristic_func):
+    def max_ab_cutoff(self, asp, state, alpha, beta, ply, heuristic_func):
         if asp.is_terminal_state(state):
             maximizing_player = asp.get_start_state().player_to_move()
-            terminal_tuple = asp.evaluate_terminal(state)
+            terminal_tuple = asp.evaluate_state(state)
             if(maximizing_player == 0):
                 return terminal_tuple[0], None
             else:
@@ -91,19 +120,17 @@ class StudentBot:
                 alpha = max(alpha, value)
             if value >= beta:
                 return value, move
-            
+
         return value, move
 
-    def min_ab_cutoff(self, asp, state, alpha, 
-                      beta, ply, heuristic_func):
+    def min_ab_cutoff(self, asp, state, alpha, beta, ply, heuristic_func):
         if asp.is_terminal_state(state):
             maximizing_player = asp.get_start_state().player_to_move()
-            terminal_tuple = asp.evaluate_terminal(state)
+            terminal_tuple = asp.evaluate_state(state)
             if(maximizing_player == 0):
                 return terminal_tuple[0], None
             else:
                 return terminal_tuple[1], None
-
         if ply <= 0:
             return heuristic_func(state), None
         value = math.inf
@@ -134,7 +161,7 @@ class RandBot:
         if possibilities:
             return random.choice(possibilities)
         return "U"
-    
+
     def cleanup(self):
         pass
 
