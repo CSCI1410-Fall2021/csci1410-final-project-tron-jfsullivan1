@@ -11,6 +11,9 @@ import random, math
 class StudentBot:
     """ Write your student bot here"""
 
+    def heuristic_func():
+        return 0
+
     def decide(self, asp):
         """
         Input: asp, a TronProblem
@@ -19,22 +22,23 @@ class StudentBot:
         To get started, you can get the current
         state by calling asp.get_start_state()
         """
-        state = asp.get_start_state()
-        locs = state.player_locs
-        board = state.board
-        ptm = state.ptm
-        loc = locs[ptm]
-        possibilities = list(TronProblem.get_safe_actions(board, loc))
-        if not possibilities:
-            return "L"
-        best_move = possibilities[0]
-        most_moves = -1
-        for move in possibilities:
-            next_loc = TronProblem.move(loc, move)
-            if len(TronProblem.get_safe_actions(board, next_loc)) <= 2:
-                if len(TronProblem.get_safe_actions(board, next_loc)) > most_moves:
-                    best_move = move
-                    most_moves = len(TronProblem.get_safe_actions(board, next_loc))
+    
+        #locs = state.player_locs
+        #board = state.board
+        #ptm = state.ptm
+        #loc = locs[ptm]
+        #possibilities = list(TronProblem.get_safe_actions(board, loc))
+        #if not possibilities:
+         #   return "L"
+        #best_move = possibilities[0]
+        #most_moves = -1
+        #for move in possibilities:
+           # next_loc = TronProblem.move(loc, move)
+           # if len(TronProblem.get_safe_actions(board, next_loc)) <= 2:
+              #  if len(TronProblem.get_safe_actions(board, next_loc)) > most_moves:
+               #     best_move = move
+                #    most_moves = len(TronProblem.get_safe_actions(board, next_loc))
+        best_move = self.alpha_beta_cutoff(asp, 4, self.heuristic_func)
         return best_move
 
     def cleanup(self):
@@ -50,6 +54,68 @@ class StudentBot:
         feel free to leave it as "pass"
         """
         pass
+
+    def alpha_beta_cutoff(self, asp, cutoff_ply, heuristic_func):
+        '''
+        heuristic_func - a function that takes in a GameState and outputs a
+            real number indicating how good that state is for the player who is
+            using alpha_beta_cutoff to choose their action. You do not need to
+            implement this function, as it should be provided by whomever is
+            calling alpha_beta_cutoff, however you are welcome to write
+            evaluation functions to test your implemention. The heuristic_func
+            we provide does not handle terminal states, so evaluate terminal
+            states the same way you evaluated them in the previous algorithms.
+        '''
+        start = asp.get_start_state()
+        _, move = self.max_ab_cutoff(asp, start, -math.inf, math.inf, cutoff_ply, heuristic_func)
+        return move
+
+    def max_ab_cutoff(self, asp, 
+                      state, alpha, 
+                      beta, ply, heuristic_func):
+        if asp.is_terminal_state(state):
+            maximizing_player = asp.get_start_state().player_to_move()
+            terminal_tuple = asp.evaluate_terminal(state)
+            if(maximizing_player == 0):
+                return terminal_tuple[0], None
+            else:
+                return terminal_tuple[1], None
+        if ply <= 0:
+            return heuristic_func(state), None
+        value = -math.inf
+        move = None
+        for action in asp.get_available_actions(state):
+            max_value, _ = self.min_ab_cutoff(asp, asp.transition(state, action), alpha, beta, ply-1, heuristic_func)
+            if max_value > value:
+                value, move = max_value, action
+                alpha = max(alpha, value)
+            if value >= beta:
+                return value, move
+            
+        return value, move
+
+    def min_ab_cutoff(self, asp, state, alpha, 
+                      beta, ply, heuristic_func):
+        if asp.is_terminal_state(state):
+            maximizing_player = asp.get_start_state().player_to_move()
+            terminal_tuple = asp.evaluate_terminal(state)
+            if(maximizing_player == 0):
+                return terminal_tuple[0], None
+            else:
+                return terminal_tuple[1], None
+
+        if ply <= 0:
+            return heuristic_func(state), None
+        value = math.inf
+        move = None
+        for action in asp.get_available_actions(state):
+            min_value, _ = self.max_ab_cutoff(asp, asp.transition(state, action), alpha, beta, ply-1, heuristic_func)
+            if min_value < value:
+                value, move = min_value, action
+                beta = min(beta, value)
+            if value <= alpha:
+                return value, move
+        return value, move
 
 class RandBot:
     """Moves in a random (safe) direction"""
