@@ -19,7 +19,7 @@ class StudentBot:
             opp_symbol = '2'
         else:
             opp_symbol = '1'
-        score = 0 # number of squares for the player
+        player_score = 0 # number of squares for the player
         board = state.board
         board_arr = np.array(board)
         index_player = np.where(board_arr == player_symbol)
@@ -27,16 +27,16 @@ class StudentBot:
         shape = np.shape(board_arr)
         rows = shape[0]
         cols = shape[1]
-        for row in range(1, rows - 2):
-            for col in range(1, cols - 2):
+        for row in range(1, rows - 1):
+            for col in range(1, cols - 1):
                 current_square = board_arr[row, col]
                 if current_square == ' ':
                     dist_to_player = abs(row - index_player[0]) + abs(col - index_player[1])
                     dist_to_opp = abs(row - index_opp[0]) + abs(col - index_opp[1])
-                    if dist_to_player > dist_to_opp:
-                        score += 1
+                    if dist_to_player < dist_to_opp:
+                        player_score += 1
 
-        return score
+        return player_score
 
     def decide(self, asp):
         """
@@ -64,6 +64,9 @@ class StudentBot:
                 #    most_moves = len(TronProblem.get_safe_actions(board, next_loc))
 
         best_move = self.alpha_beta_cutoff(asp, 10, self.heuristic_func)
+        if (asp.is_terminal_state(asp.transition(asp.get_start_state(), best_move))):
+            if (asp.get_start_state().get_safe_actions()):
+                best_move = asp.get_start_state().get_safe_actions()[0]
         return best_move
 
     def cleanup(self):
