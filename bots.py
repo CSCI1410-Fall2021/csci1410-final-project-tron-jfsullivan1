@@ -27,8 +27,8 @@ class StudentBot:
         shape = np.shape(board_arr)
         rows = shape[0]
         cols = shape[1]
-        for row in range(rows):
-            for col in range(cols):
+        for row in range(1, rows - 2):
+            for col in range(1, cols - 2):
                 current_square = board_arr[row, col]
                 if current_square == ' ':
                     dist_to_player = abs(row - index_player[0]) + abs(col - index_player[1])
