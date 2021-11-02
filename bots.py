@@ -11,6 +11,7 @@ import random, math
 class StudentBot:
     """ Write your student bot here"""
 
+    # Vonoroi
     def heuristic_func(self, state):
         player_symbol = str(state.player_to_move() + 1)
         opp_symbol = '0'
@@ -29,14 +30,21 @@ class StudentBot:
         rows = shape[0]
         cols = shape[1]
 
-
-
         for row in range(rows):
             for col in range(cols):
                 current_square = board_arr[row, col]
                 if current_square == ' ':
+
+                    player_board = board_arr[min(index_player[0][0], row): max(index_player[0][0], row), min(index_player[1][0], col): max(index_player[1][0], col)]
+                    opp_board = board_arr[min(index_opp[0][0], row): max(index_opp[0][0], row), min(index_opp[1][0], col): max(index_opp[1][0], col)]
+
+                    player_x = np.count_nonzero(player_board == 'x')
+                    opp_x = np.count_nonzero(opp_board == 'x')
                     dist_to_player = abs(row - index_player[0]) + abs(col - index_player[1])
                     dist_to_opp = abs(row - index_opp[0]) + abs(col - index_opp[1])
+                    dist_to_player += player_x
+                    dist_to_opp += opp_x
+
                     if dist_to_player > dist_to_opp:
                         score += 1
 
