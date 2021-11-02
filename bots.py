@@ -63,7 +63,7 @@ class StudentBot:
                #     best_move = move
                 #    most_moves = len(TronProblem.get_safe_actions(board, next_loc))
 
-        best_move = self.alpha_beta_cutoff(asp, 11, self.heuristic_func)
+        best_move = self.alpha_beta_cutoff(asp, 10, self.heuristic_func)
         return best_move
 
     def cleanup(self):
