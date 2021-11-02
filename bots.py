@@ -11,7 +11,7 @@ import random, math
 class StudentBot:
     """ Write your student bot here"""
 
-    # Vonoroi
+
     def heuristic_func(self, state):
         player_symbol = str(state.player_to_move() + 1)
         opp_symbol = '0'
@@ -19,9 +19,7 @@ class StudentBot:
             opp_symbol = '2'
         else:
             opp_symbol = '1'
-
         score = 0 # number of squares for the player
-
         board = state.board
         board_arr = np.array(board)
         index_player = np.where(board_arr == player_symbol)
@@ -29,22 +27,12 @@ class StudentBot:
         shape = np.shape(board_arr)
         rows = shape[0]
         cols = shape[1]
-
         for row in range(rows):
             for col in range(cols):
                 current_square = board_arr[row, col]
                 if current_square == ' ':
-
-                    player_board = board_arr[min(index_player[0][0], row): max(index_player[0][0], row), min(index_player[1][0], col): max(index_player[1][0], col)]
-                    opp_board = board_arr[min(index_opp[0][0], row): max(index_opp[0][0], row), min(index_opp[1][0], col): max(index_opp[1][0], col)]
-
-                    player_x = np.count_nonzero(player_board == 'x')
-                    opp_x = np.count_nonzero(opp_board == 'x')
                     dist_to_player = abs(row - index_player[0]) + abs(col - index_player[1])
                     dist_to_opp = abs(row - index_opp[0]) + abs(col - index_opp[1])
-                    dist_to_player += player_x
-                    dist_to_opp += opp_x
-
                     if dist_to_player > dist_to_opp:
                         score += 1
 
@@ -75,7 +63,7 @@ class StudentBot:
                #     best_move = move
                 #    most_moves = len(TronProblem.get_safe_actions(board, next_loc))
 
-        best_move = self.alpha_beta_cutoff(asp, 6, self.heuristic_func)
+        best_move = self.alpha_beta_cutoff(asp, 11, self.heuristic_func)
         return best_move
 
     def cleanup(self):
