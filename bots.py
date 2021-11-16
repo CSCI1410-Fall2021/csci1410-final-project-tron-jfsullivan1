@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import numpy as np
+from queue import Queue
 from tronproblem import *
 from trontypes import CellType, PowerupType
 import random, math
@@ -11,6 +12,44 @@ import random, math
 class StudentBot:
     """ Write your student bot here"""
 
+
+    def __distance_helper(self, state, player_loc, goal_square):
+
+        # (x, y) coordinate pairs
+        queue = Queue()
+        queue.put(player_loc)
+
+        # {Coordinate: Distance} pairs
+        distance_dict = {}
+        distance_dict[player_loc] = 0
+
+        # (x, y) coordinate pairs
+        visited = set()
+
+        while not queue.empty():
+            current_loc = queue.get()
+            visited.add(current_loc)
+            if current_loc == goal_square:
+                return distance_dict[goal_square]
+
+            safe_actions = TronProblem.get_safe_actions(state.board, current_loc)
+            for action in safe_actions:
+                if not action in visited:
+                    next_coord = None
+                    if action == 'U':
+                        next_coord = (current_loc[0] - 1, current_loc[1])
+                    elif action == 'D':
+                        next_coord = (current_loc[0] + 1, current_loc[1])
+                    elif action == 'L':
+                        next_coord = (current_loc[0], current_loc[1] - 1)
+                    elif action == 'R':
+                        next_coord = (current_loc[0], current_loc[1] + 1)
+
+                    queue.put(next_coord)
+                    distance_dict[next_coord] = distance_dict.get(next_coord, 0) + 1
+        
+        # Return a ridiculous number so we know we can't get to the goal
+        return 10000
 
     def heuristic_func(self, state):
         player_symbol = str(state.player_to_move() + 1)
@@ -31,9 +70,9 @@ class StudentBot:
             for col in range(1, cols - 1):
                 current_square = board_arr[row, col]
                 if current_square == ' ':
-                    dist_to_player = abs(row - index_player[0]) + abs(col - index_player[1])
-                    dist_to_opp = abs(row - index_opp[0]) + abs(col - index_opp[1])
-                    if dist_to_player < dist_to_opp:
+                    dist_for_player = self.__distance_helper(state, index_player, (row, col))
+                    dist_for_opp = self.__distance_helper(state, index_opp, (row, col))
+                    if dist_for_player < dist_for_opp:
                         player_score += 1
 
         return player_score
