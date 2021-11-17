@@ -42,11 +42,11 @@ class StudentBot:
                 elif action == 'R':
                     next_coord = (current_loc[0], current_loc[1] + 1)
 
-                print("NEXT COORD: ", next_coord)
+
                 if next_coord not in visited:
                     queue.put(next_coord)
                     distance_dict[next_coord] = distance_dict.get(current_loc, 0) + 1
-                    print("THE DICTIONARY: ", distance_dict)
+
         
         return distance_dict
 
