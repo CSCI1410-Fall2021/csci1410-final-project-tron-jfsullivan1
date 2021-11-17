@@ -29,7 +29,6 @@ class StudentBot:
         while not queue.empty():
             current_loc = queue.get()
             visited.add(current_loc)
-            print("VISITED SIZE: ", len(visited))
 
             safe_actions = TronProblem.get_safe_actions(state.board, current_loc)
             for action in safe_actions:
@@ -48,8 +47,6 @@ class StudentBot:
                     queue.put(next_coord)
                     distance_dict[next_coord] = distance_dict.get(current_loc, 0) + 1
                     print("THE DICTIONARY: ", distance_dict)
-
-        # Return a ridiculous number so we know we can't get to the goal
         
         return distance_dict
 
@@ -66,8 +63,8 @@ class StudentBot:
         index_player = np.where(board_arr == player_symbol)
         index_opp = np.where(board_arr == opp_symbol)
         shape = np.shape(board_arr)
-        rows = shape[0]
-        cols = shape[1]
+        #rows = shape[0]
+        #cols = shape[1]
         dist_for_player = self.__distance_helper(state, (index_player[0][0], index_player[1][0]))
         dist_for_opp = self.__distance_helper(state, (index_opp[0][0], index_opp[1][0]))
         for coordinate in dist_for_player.keys():
@@ -108,20 +105,20 @@ class StudentBot:
                 #    most_moves = len(TronProblem.get_safe_actions(board, next_loc))
 
         best_move = self.alpha_beta_cutoff(asp, 4, self.heuristic_func)
-        if (asp.is_terminal_state(asp.transition(asp.get_start_state(), best_move))):
-            possibilities = asp.get_start_state().get_safe_actions()
-            if (possibilities):
-                locs = asp.transition(asp.get_start_state(), best_move).player_locs
-                board = asp.transition(asp.get_start_state(), best_move).board
-                ptm = asp.transition(asp.get_start_state(), best_move).ptm
-                loc = locs[ptm]
-                most_moves = -1
-                for move in possibilities:
-                    next_loc = TronProblem.move(loc, move)
-                    if len(TronProblem.get_safe_actions(board, next_loc)) <= 2:
-                        if len(TronProblem.get_safe_actions(board, next_loc)) > most_moves:
-                            best_move = move
-                            most_moves = len(TronProblem.get_safe_actions(board, next_loc))
+        # if (asp.is_terminal_state(asp.transition(asp.get_start_state(), best_move))):
+        #     possibilities = asp.get_start_state().get_safe_actions()
+        #     if (possibilities):
+        #         locs = asp.transition(asp.get_start_state(), best_move).player_locs
+        #         board = asp.transition(asp.get_start_state(), best_move).board
+        #         ptm = asp.transition(asp.get_start_state(), best_move).ptm
+        #         loc = locs[ptm]
+        #         most_moves = -1
+        #         for move in possibilities:
+        #             next_loc = TronProblem.move(loc, move)
+        #             if len(TronProblem.get_safe_actions(board, next_loc)) <= 2:
+        #                 if len(TronProblem.get_safe_actions(board, next_loc)) > most_moves:
+        #                     best_move = move
+        #                     most_moves = len(TronProblem.get_safe_actions(board, next_loc))
 
         return best_move
 
