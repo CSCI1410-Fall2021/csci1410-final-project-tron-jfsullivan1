@@ -45,7 +45,7 @@ class StudentBot:
 
                 if next_coord not in visited:
                     queue.put(next_coord)
-                    distance_dict[next_coord] = distance_dict.get(current_loc, 0) + 1
+                    distance_dict[next_coord] = distance_dict[current_loc] + 1
 
         
         return distance_dict
@@ -68,7 +68,10 @@ class StudentBot:
         dist_for_player = self.__distance_helper(state, (index_player[0][0], index_player[1][0]))
         dist_for_opp = self.__distance_helper(state, (index_opp[0][0], index_opp[1][0]))
         for coordinate in dist_for_player.keys():
-            if dist_for_player.get(coordinate, 10000) < dist_for_opp.get(coordinate, 10000):
+            if coordinate in dist_for_opp:
+                if dist_for_player[coordinate] < dist_for_opp[coordinate]:
+                    player_score += 1
+            else:
                 player_score += 1
         # for row in range(1, rows - 1):
         #     for col in range(1, cols - 1):
