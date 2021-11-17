@@ -13,7 +13,7 @@ class StudentBot:
     """ Write your student bot here"""
 
 
-    def __distance_helper(self, state, player_loc, goal_square):
+    def __distance_helper(self, state, player_loc):
 
         # (x, y) coordinate pairs
         queue = Queue()
@@ -29,27 +29,26 @@ class StudentBot:
         while not queue.empty():
             current_loc = queue.get()
             visited.add(current_loc)
-            if current_loc == goal_square:
-                return distance_dict[goal_square]
 
             safe_actions = TronProblem.get_safe_actions(state.board, current_loc)
             for action in safe_actions:
-                if not action in visited:
-                    next_coord = None
-                    if action == 'U':
-                        next_coord = (current_loc[0] - 1, current_loc[1])
-                    elif action == 'D':
-                        next_coord = (current_loc[0] + 1, current_loc[1])
-                    elif action == 'L':
-                        next_coord = (current_loc[0], current_loc[1] - 1)
-                    elif action == 'R':
-                        next_coord = (current_loc[0], current_loc[1] + 1)
+                next_coord = None
+                if action == 'U':
+                    next_coord = (current_loc[0] - 1, current_loc[1])
+                elif action == 'D':
+                    next_coord = (current_loc[0] + 1, current_loc[1])
+                elif action == 'L':
+                    next_coord = (current_loc[0], current_loc[1] - 1)
+                elif action == 'R':
+                    next_coord = (current_loc[0], current_loc[1] + 1)
 
+                if next_coord not in visited:
                     queue.put(next_coord)
                     distance_dict[next_coord] = distance_dict.get(next_coord, 0) + 1
-        
+
         # Return a ridiculous number so we know we can't get to the goal
-        return 10000
+        
+        return distance_dict
 
     def heuristic_func(self, state):
         player_symbol = str(state.player_to_move() + 1)
@@ -66,13 +65,13 @@ class StudentBot:
         shape = np.shape(board_arr)
         rows = shape[0]
         cols = shape[1]
+        dist_for_player = self.__distance_helper(state, (index_player[0][0], index_player[1][0]))
+        dist_for_opp = self.__distance_helper(state, (index_opp[0][0], index_opp[1][0]))
         for row in range(1, rows - 1):
             for col in range(1, cols - 1):
                 current_square = board_arr[row, col]
                 if current_square == ' ':
-                    dist_for_player = self.__distance_helper(state, index_player, (row, col))
-                    dist_for_opp = self.__distance_helper(state, index_opp, (row, col))
-                    if dist_for_player < dist_for_opp:
+                    if dist_for_player[(row, col)] < dist_for_opp[(row, col)]:
                         player_score += 1
 
         return player_score
