@@ -71,7 +71,7 @@ class StudentBot:
             for col in range(1, cols - 1):
                 current_square = board_arr[row, col]
                 if current_square == ' ':
-                    if dist_for_player[(row, col)] < dist_for_opp[(row, col)]:
+                    if dist_for_player.get((row, col), 10000) < dist_for_opp.get((row, col), 10000):
                         player_score += 1
 
         return player_score
