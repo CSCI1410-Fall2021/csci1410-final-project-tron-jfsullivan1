@@ -46,7 +46,7 @@ class StudentBot:
                 print("NEXT COORD: ", next_coord)
                 if next_coord not in visited:
                     queue.put(next_coord)
-                    distance_dict[next_coord] = distance_dict.get(next_coord, 0) + 1
+                    distance_dict[next_coord] = distance_dict.get(current_loc, 0) + 1
                     print("THE DICTIONARY: ", distance_dict)
 
         # Return a ridiculous number so we know we can't get to the goal
@@ -70,12 +70,15 @@ class StudentBot:
         cols = shape[1]
         dist_for_player = self.__distance_helper(state, (index_player[0][0], index_player[1][0]))
         dist_for_opp = self.__distance_helper(state, (index_opp[0][0], index_opp[1][0]))
-        for row in range(1, rows - 1):
-            for col in range(1, cols - 1):
-                current_square = board_arr[row, col]
-                if current_square == ' ':
-                    if dist_for_player.get((row, col), 10000) < dist_for_opp.get((row, col), 10000):
-                        player_score += 1
+        for coordinate in dist_for_player.keys():
+            if dist_for_player.get(coordinate, 10000) < dist_for_opp.get(coordinate, 10000):
+                player_score += 1
+        # for row in range(1, rows - 1):
+        #     for col in range(1, cols - 1):
+        #         current_square = board_arr[row, col]
+        #         if current_square == ' ':
+        #             if dist_for_player.get((row, col), 10000) < dist_for_opp.get((row, col), 10000):
+        
 
         return player_score
 
@@ -104,7 +107,7 @@ class StudentBot:
                #     best_move = move
                 #    most_moves = len(TronProblem.get_safe_actions(board, next_loc))
 
-        best_move = self.alpha_beta_cutoff(asp, 10, self.heuristic_func)
+        best_move = self.alpha_beta_cutoff(asp, 4, self.heuristic_func)
         if (asp.is_terminal_state(asp.transition(asp.get_start_state(), best_move))):
             possibilities = asp.get_start_state().get_safe_actions()
             if (possibilities):
