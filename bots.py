@@ -29,6 +29,7 @@ class StudentBot:
         while not queue.empty():
             current_loc = queue.get()
             visited.add(current_loc)
+            print("VISITED SIZE: ", len(visited))
 
             safe_actions = TronProblem.get_safe_actions(state.board, current_loc)
             for action in safe_actions:
@@ -42,9 +43,11 @@ class StudentBot:
                 elif action == 'R':
                     next_coord = (current_loc[0], current_loc[1] + 1)
 
+                print("NEXT COORD: ", next_coord)
                 if next_coord not in visited:
                     queue.put(next_coord)
                     distance_dict[next_coord] = distance_dict.get(next_coord, 0) + 1
+                    print("THE DICTIONARY: ", distance_dict)
 
         # Return a ridiculous number so we know we can't get to the goal
         
