@@ -76,14 +76,16 @@ class StudentBot:
             #         opp_score += 1
             # else:
             #     player_score += 1
-        for row in range(1, rows - 1):
-            for col in range(1, cols - 1):
-                current_square = board_arr[row, col]
-                if current_square == ' ':
-                    if dist_for_player[row, col] < dist_for_opp[row, col]:
-                        player_score += 1
-                    elif dist_for_opp[row, col] < dist_for_player[row, col]:
-                        opp_score += 1
+        # for row in range(1, rows - 1):
+        #     for col in range(1, cols - 1):
+        #         current_square = board_arr[row, col]
+        #         if current_square == ' ':
+        diff_array = dist_for_opp - dist_for_player
+        player_score_arr = (diff_array > 0)
+        opp_score_arr = (diff_array < 0)
+        player_score = np.sum(player_score_arr)
+        opp_score = np.sum(opp_score_arr)
+
         #             if dist_for_player.get((row, col), 10000) < dist_for_opp.get((row, col), 10000):
         
         player_score = (player_score) / (player_score+opp_score)
