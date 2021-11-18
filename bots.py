@@ -20,8 +20,9 @@ class StudentBot:
         queue.put(player_loc)
 
         # {Coordinate: Distance} pairs
-        distance_dict = {}
-        distance_dict[player_loc] = 0
+        distance_arr = np.ndarray(np.shape(state.board))
+        distance_arr = np.ndarray.fill(distance_arr, 10000)
+        distance_arr[player_loc[0], player_loc[1]] = 0
 
         # (x, y) coordinate pairs
         visited = set()
@@ -45,10 +46,10 @@ class StudentBot:
 
                 if next_coord not in visited:
                     queue.put(next_coord)
-                    distance_dict[next_coord] = distance_dict[current_loc] + 1
+                    distance_arr[next_coord[0], next_coord[1]] = distance_arr[current_loc[0], current_loc[1]] + 1
 
         
-        return distance_dict
+        return distance_arr
 
     def heuristic_func(self, state):
         player_symbol = str(state.player_to_move() + 1)
@@ -58,28 +59,35 @@ class StudentBot:
         else:
             opp_symbol = '1'
         player_score = 0 # number of squares for the player
+        opp_score = 0
         board = state.board
         board_arr = np.array(board)
         index_player = np.where(board_arr == player_symbol)
         index_opp = np.where(board_arr == opp_symbol)
         shape = np.shape(board_arr)
-        #rows = shape[0]
-        #cols = shape[1]
+        rows = shape[0]
+        cols = shape[1]
         dist_for_player = self.__distance_helper(state, (index_player[0][0], index_player[1][0]))
         dist_for_opp = self.__distance_helper(state, (index_opp[0][0], index_opp[1][0]))
-        for coordinate in dist_for_player.keys():
-            if coordinate in dist_for_opp:
-                if dist_for_player[coordinate] < dist_for_opp[coordinate]:
-                    player_score += 1
-            else:
-                player_score += 1
-        # for row in range(1, rows - 1):
-        #     for col in range(1, cols - 1):
-        #         current_square = board_arr[row, col]
-        #         if current_square == ' ':
+        #for row in dist_for_player:
+            # if coordinate in dist_for_opp:
+            #     if dist_for_player[coordinate] < dist_for_opp[coordinate]:
+            #         player_score += 1
+            #     else:
+            #         opp_score += 1
+            # else:
+            #     player_score += 1
+        for row in range(1, rows - 1):
+            for col in range(1, cols - 1):
+                current_square = board_arr[row, col]
+                if current_square == ' ':
+                    if dist_for_player[row, col] < dist_for_opp[row, col]:
+                        player_score += 1
+                    elif dist_for_opp[row, col] < dist_for_player[row, col]:
+                        opp_score += 1
         #             if dist_for_player.get((row, col), 10000) < dist_for_opp.get((row, col), 10000):
         
-
+        player_score = (player_score) / (player_score+opp_score)
         return player_score
 
     def decide(self, asp):
