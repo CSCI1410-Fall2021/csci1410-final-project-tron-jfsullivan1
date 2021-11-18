@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import numpy as np
-from queue import Queue
+from collections import deque as Queue
 from tronproblem import *
 from trontypes import CellType, PowerupType
 import random, math
@@ -17,7 +17,7 @@ class StudentBot:
 
         # (x, y) coordinate pairs
         queue = Queue()
-        queue.put(player_loc)
+        queue.append(player_loc)
 
         # {Coordinate: Distance} pairs
         distance_arr = np.full(np.shape(state.board), 10000)
@@ -26,8 +26,8 @@ class StudentBot:
         # (x, y) coordinate pairs
         visited = set()
 
-        while not queue.empty():
-            current_loc = queue.get()
+        while queue:
+            current_loc = queue.pop()
             visited.add(current_loc)
 
             safe_actions = TronProblem.get_safe_actions(state.board, current_loc)
@@ -44,7 +44,7 @@ class StudentBot:
 
 
                 if next_coord not in visited:
-                    queue.put(next_coord)
+                    queue.append(next_coord)
                     distance_arr[next_coord[0], next_coord[1]] = distance_arr[current_loc[0], current_loc[1]] + 1
 
         
@@ -116,7 +116,7 @@ class StudentBot:
                #     best_move = move
                 #    most_moves = len(TronProblem.get_safe_actions(board, next_loc))
 
-        best_move = self.alpha_beta_cutoff(asp, 4, self.heuristic_func)
+        best_move = self.alpha_beta_cutoff(asp, 3, self.heuristic_func)
         # if (asp.is_terminal_state(asp.transition(asp.get_start_state(), best_move))):
         #     possibilities = asp.get_start_state().get_safe_actions()
         #     if (possibilities):
