@@ -42,12 +42,10 @@ class StudentBot:
                 elif action == 'R':
                     next_coord = (current_loc[0], current_loc[1] + 1)
 
-
                 if next_coord not in visited:
                     queue.append(next_coord)
                     distance_arr[next_coord[0], next_coord[1]] = distance_arr[current_loc[0], current_loc[1]] + 1
 
-        
         return distance_arr
 
     def heuristic_func(self, state):
@@ -68,28 +66,19 @@ class StudentBot:
         cols = shape[1]
         dist_for_player = self.__distance_helper(state, (index_player[0][0], index_player[1][0]))
         dist_for_opp = self.__distance_helper(state, (index_opp[0][0], index_opp[1][0]))
-        #for row in dist_for_player:
-            # if coordinate in dist_for_opp:
-            #     if dist_for_player[coordinate] < dist_for_opp[coordinate]:
-            #         player_score += 1
-            #     else:
-            #         opp_score += 1
-            # else:
-            #     player_score += 1
-        # for row in range(1, rows - 1):
-        #     for col in range(1, cols - 1):
-        #         current_square = board_arr[row, col]
-        #         if current_square == ' ':
         diff_array = dist_for_opp - dist_for_player
         player_score_arr = (diff_array > 0)
         opp_score_arr = (diff_array < 0)
         player_score = np.sum(player_score_arr)
         opp_score = np.sum(opp_score_arr)
-
-        #             if dist_for_player.get((row, col), 10000) < dist_for_opp.get((row, col), 10000):
         
-        player_score = (player_score) / (player_score+opp_score)
-        return player_score
+        print("SCORE FOR P: ", player_score)
+        print("OPP SCORE: ", opp_score)
+        print("PLAYER ARR: ", player_score_arr)
+        print("OPP ARR: ", opp_score_arr)
+
+        #player_score = (player_score) / (player_score+opp_score)
+        return (player_score - opp_score)
 
     def decide(self, asp):
         """
