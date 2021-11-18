@@ -75,11 +75,6 @@ class StudentBot:
         opp_score_arr = (diff_array < 0)
         player_score = np.sum(player_score_arr)
         opp_score = np.sum(opp_score_arr)
-        
-        print("SCORE FOR P: ", player_score)
-        print("OPP SCORE: ", opp_score)
-        print("PLAYER ARR: ", player_score_arr)
-        print("OPP ARR: ", opp_score_arr)
 
         #player_score = (player_score) / (player_score+opp_score)
         return (player_score)
@@ -109,7 +104,7 @@ class StudentBot:
                #     best_move = move
                 #    most_moves = len(TronProblem.get_safe_actions(board, next_loc))
 
-        best_move = self.alpha_beta_cutoff(asp, 3, self.heuristic_func)
+        best_move = self.alpha_beta_cutoff(asp, 5, self.heuristic_func)
         # if (asp.is_terminal_state(asp.transition(asp.get_start_state(), best_move))):
         #     possibilities = asp.get_start_state().get_safe_actions()
         #     if (possibilities):
