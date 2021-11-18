@@ -20,8 +20,7 @@ class StudentBot:
         queue.put(player_loc)
 
         # {Coordinate: Distance} pairs
-        distance_arr = np.ndarray(np.shape(state.board))
-        distance_arr = np.ndarray.fill(distance_arr, 10000)
+        distance_arr = np.full(np.shape(state.board), 10000)
         distance_arr[player_loc[0], player_loc[1]] = 0
 
         # (x, y) coordinate pairs
