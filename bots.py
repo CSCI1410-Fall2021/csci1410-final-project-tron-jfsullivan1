@@ -66,13 +66,11 @@ class StudentBot:
         board_arr = np.array(board)
         index_player = np.where(board_arr == player_symbol)
         index_opp = np.where(board_arr == opp_symbol)
-        shape = np.shape(board_arr)
-        rows = shape[0]
-        cols = shape[1]
+
         dist_for_player = self.__distance_helper(state, (index_player[0][0], index_player[1][0]))
         dist_for_opp = self.__distance_helper(state, (index_opp[0][0], index_opp[1][0]))
-        dist_for_player = dist_for_player[1: -1, 1: -1]
-        dist_for_opp = dist_for_opp[1: -1, 1: -1]
+        #dist_for_player = dist_for_player[1: -1, 1: -1]
+        #dist_for_opp = dist_for_opp[1: -1, 1: -1]
 
         diff_array = dist_for_opp - dist_for_player
 
@@ -81,7 +79,7 @@ class StudentBot:
         player_score = np.sum(player_score_arr)
         opp_score = np.sum(opp_score_arr)
 
-        player_score = (player_score) / (player_score+opp_score)
+        player_score = (player_score) / (np.bitwise_and(player_score_arr, opp_score_arr))
         return player_score
 
     def decide(self, asp):
