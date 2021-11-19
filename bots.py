@@ -69,15 +69,24 @@ class StudentBot:
 
         dist_for_player = self.__distance_helper(state, (index_player[0][0], index_player[1][0]))
         dist_for_opp = self.__distance_helper(state, (index_opp[0][0], index_opp[1][0]))
-        dist_for_player = dist_for_player[1: -1, 1: -1]
-        dist_for_opp = dist_for_opp[1: -1, 1: -1]
 
-        diff_array = dist_for_opp - dist_for_player
+        rows = np.shape(board_arr)[0]
+        cols = np.shape(board_arr)[1]
+        for row in range(1, rows - 1):
+            for col in range(1, cols - 1):
+                if dist_for_player[row, col] < dist_for_opp[row, col]:
+                    player_score += 1
+                elif dist_for_opp[row, col] < dist_for_player[row, col]:
+                    opp_score += 1
+        # dist_for_player = dist_for_player[1: -1, 1: -1]
+        # dist_for_opp = dist_for_opp[1: -1, 1: -1]
 
-        player_score_arr = (diff_array > 0)
-        opp_score_arr = (diff_array < 0)
-        player_score = np.sum(player_score_arr)
-        opp_score = np.sum(opp_score_arr)
+        # diff_array = dist_for_opp - dist_for_player
+
+        # player_score_arr = (diff_array > 0)
+        # opp_score_arr = (diff_array < 0)
+        # player_score = np.sum(player_score_arr)
+        # opp_score = np.sum(opp_score_arr)
 
         player_score = self.sigmoid((player_score) / (player_score+opp_score))
         return player_score
