@@ -112,7 +112,7 @@ class StudentBot:
             board_arr = np.array(asp.get_start_state().board)
             player_symbol = str(asp.get_start_state().player_to_move() + 1)
             index_player = np.where(board_arr == player_symbol)
-            possibilities = TronProblem.get_safe_actions(asp.get_start_state().board, index_player)
+            possibilities = TronProblem.get_safe_actions(asp.get_start_state().board, (index_player[0][0], index_player[1][0]))
             if (possibilities):
                 best_move = possibilities[0]
         return best_move
