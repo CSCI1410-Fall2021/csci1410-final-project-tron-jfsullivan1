@@ -69,8 +69,8 @@ class StudentBot:
 
         dist_for_player = self.__distance_helper(state, (index_player[0][0], index_player[1][0]))
         dist_for_opp = self.__distance_helper(state, (index_opp[0][0], index_opp[1][0]))
-        #dist_for_player = dist_for_player[1: -1, 1: -1]
-        #dist_for_opp = dist_for_opp[1: -1, 1: -1]
+        dist_for_player = dist_for_player[1: -1, 1: -1]
+        dist_for_opp = dist_for_opp[1: -1, 1: -1]
 
         diff_array = dist_for_opp - dist_for_player
 
@@ -79,7 +79,7 @@ class StudentBot:
         player_score = np.sum(player_score_arr)
         opp_score = np.sum(opp_score_arr)
 
-        player_score = (player_score) / (np.bitwise_and(player_score_arr, opp_score_arr))
+        player_score = (player_score) / (player_score+opp_score)
         return player_score
 
     def decide(self, asp):
@@ -161,9 +161,9 @@ class StudentBot:
             maximizing_player = asp.get_start_state().player_to_move()
             terminal_tuple = asp.evaluate_state(state)
             if(maximizing_player == 0):
-                return terminal_tuple[0], None
+                return terminal_tuple[0]*100, None
             else:
-                return terminal_tuple[1], None
+                return terminal_tuple[1]*100, None
         if ply <= 0:
             return heuristic_func(state, asp), None
         value = -math.inf
@@ -183,9 +183,9 @@ class StudentBot:
             maximizing_player = asp.get_start_state().player_to_move()
             terminal_tuple = asp.evaluate_state(state)
             if(maximizing_player == 0):
-                return terminal_tuple[0], None
+                return terminal_tuple[0]*100, None
             else:
-                return terminal_tuple[1], None
+                return terminal_tuple[1]*100, None
         if ply <= 0:
             return heuristic_func(state, asp), None
         value = math.inf
