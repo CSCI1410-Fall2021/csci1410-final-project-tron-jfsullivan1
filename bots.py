@@ -51,9 +51,9 @@ class StudentBot:
     def heuristic_func(self, state, asp):
         if asp.is_terminal_state(state):
             if asp.evaluate_state(state)[0] == 1:
-                return 1000000
+                return 1
             else:
-                return -1000000
+                return 0
         player_symbol = str(state.player_to_move() + 1)
         opp_symbol = '0'
         if player_symbol == '1':
@@ -81,8 +81,8 @@ class StudentBot:
         player_score = np.sum(player_score_arr)
         opp_score = np.sum(opp_score_arr)
 
-        #player_score = (player_score) / (player_score+opp_score)
-        return (player_score)
+        player_score = (player_score) / (player_score+opp_score)
+        return player_score
 
     def decide(self, asp):
         """
