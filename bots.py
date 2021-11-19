@@ -49,6 +49,11 @@ class StudentBot:
         return distance_arr
 
     def heuristic_func(self, state):
+        if TronProblem.is_terminal_state(state):
+            if TronProblem.evaluate_state(state)[0] == 1:
+                return 1000000
+            else:
+                return -1000000
         player_symbol = str(state.player_to_move() + 1)
         opp_symbol = '0'
         if player_symbol == '1':
@@ -105,20 +110,20 @@ class StudentBot:
                 #    most_moves = len(TronProblem.get_safe_actions(board, next_loc))
 
         best_move = self.alpha_beta_cutoff(asp, 5, self.heuristic_func)
-        # if (asp.is_terminal_state(asp.transition(asp.get_start_state(), best_move))):
-        #     possibilities = asp.get_start_state().get_safe_actions()
-        #     if (possibilities):
-        #         locs = asp.transition(asp.get_start_state(), best_move).player_locs
-        #         board = asp.transition(asp.get_start_state(), best_move).board
-        #         ptm = asp.transition(asp.get_start_state(), best_move).ptm
-        #         loc = locs[ptm]
-        #         most_moves = -1
-        #         for move in possibilities:
-        #             next_loc = TronProblem.move(loc, move)
-        #             if len(TronProblem.get_safe_actions(board, next_loc)) <= 2:
-        #                 if len(TronProblem.get_safe_actions(board, next_loc)) > most_moves:
-        #                     best_move = move
-        #                     most_moves = len(TronProblem.get_safe_actions(board, next_loc))
+        if (asp.is_terminal_state(asp.transition(asp.get_start_state(), best_move))):
+            possibilities = asp.get_start_state().get_safe_actions()
+            if (possibilities):
+                locs = asp.transition(asp.get_start_state(), best_move).player_locs
+                board = asp.transition(asp.get_start_state(), best_move).board
+                ptm = asp.transition(asp.get_start_state(), best_move).ptm
+                loc = locs[ptm]
+                most_moves = -1
+                for move in possibilities:
+                    next_loc = TronProblem.move(loc, move)
+                    if len(TronProblem.get_safe_actions(board, next_loc)) <= 2:
+                        if len(TronProblem.get_safe_actions(board, next_loc)) > most_moves:
+                            best_move = move
+                            most_moves = len(TronProblem.get_safe_actions(board, next_loc))
 
         return best_move
 
