@@ -51,7 +51,7 @@ class StudentBot:
     def heuristic_func(self, state, asp):
         if asp.is_terminal_state(state):
             if asp.evaluate_state(state)[0] == 1:
-                return 10
+                return 1
             else:
                 return 0
         player_symbol = str(state.player_to_move() + 1)
