@@ -79,8 +79,11 @@ class StudentBot:
         player_score = np.sum(player_score_arr)
         opp_score = np.sum(opp_score_arr)
 
-        player_score = (player_score) / (player_score+opp_score)
+        player_score = self.sigmoid((player_score) / (player_score+opp_score))
         return player_score
+    
+    def sigmoid(self, x):
+        return (1/(1+math.exp(-x)))
 
     def decide(self, asp):
         """
@@ -114,7 +117,7 @@ class StudentBot:
             index_player = np.where(board_arr == player_symbol)
             possibilities = TronProblem.get_safe_actions(asp.get_start_state().board, (index_player[0][0], index_player[1][0]))
             if (possibilities):
-                best_move = possibilities[0]
+                best_move = possibilities.pop()
         return best_move
 
     def cleanup(self):
