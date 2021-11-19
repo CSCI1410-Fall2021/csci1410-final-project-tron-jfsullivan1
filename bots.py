@@ -48,9 +48,9 @@ class StudentBot:
 
         return distance_arr
 
-    def heuristic_func(self, state):
-        if TronProblem.is_terminal_state(state):
-            if TronProblem.evaluate_state(state)[0] == 1:
+    def heuristic_func(self, state, asp):
+        if asp.is_terminal_state(state):
+            if asp.evaluate_state(state)[0] == 1:
                 return 1000000
             else:
                 return -1000000
@@ -119,11 +119,11 @@ class StudentBot:
                 loc = locs[ptm]
                 most_moves = -1
                 for move in possibilities:
-                    next_loc = TronProblem.move(loc, move)
-                    if len(TronProblem.get_safe_actions(board, next_loc)) <= 2:
-                        if len(TronProblem.get_safe_actions(board, next_loc)) > most_moves:
+                    next_loc = asp.move(loc, move)
+                    if len(asp.get_safe_actions(board, next_loc)) <= 2:
+                        if len(asp.get_safe_actions(board, next_loc)) > most_moves:
                             best_move = move
-                            most_moves = len(TronProblem.get_safe_actions(board, next_loc))
+                            most_moves = len(asp.get_safe_actions(board, next_loc))
 
         return best_move
 
@@ -167,7 +167,7 @@ class StudentBot:
             else:
                 return terminal_tuple[1], None
         if ply <= 0:
-            return heuristic_func(state), None
+            return heuristic_func(state, asp), None
         value = -math.inf
         move = None
         for action in asp.get_available_actions(state):
@@ -189,7 +189,7 @@ class StudentBot:
             else:
                 return terminal_tuple[1], None
         if ply <= 0:
-            return heuristic_func(state), None
+            return heuristic_func(state, asp), None
         value = math.inf
         move = None
         for action in asp.get_available_actions(state):
