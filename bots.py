@@ -107,25 +107,14 @@ class StudentBot:
                #     best_move = move
                 #    most_moves = len(TronProblem.get_safe_actions(board, next_loc))
 
-        best_move = self.alpha_beta_cutoff(asp, 9, self.heuristic_func)
+        best_move = self.alpha_beta_cutoff(asp, 7, self.heuristic_func)
         if (asp.is_terminal_state(asp.transition(asp.get_start_state(), best_move))):
             board_arr = np.array(asp.get_start_state().board)
             player_symbol = str(asp.get_start_state().player_to_move() + 1)
             index_player = np.where(board_arr == player_symbol)
             possibilities = TronProblem.get_safe_actions(asp.get_start_state().board, index_player)
             if (possibilities):
-                locs = asp.transition(asp.get_start_state(), best_move).player_locs
-                board = asp.transition(asp.get_start_state(), best_move).board
-                ptm = asp.transition(asp.get_start_state(), best_move).ptm
-                loc = locs[ptm]
-                most_moves = -1
-                for move in possibilities:
-                    next_loc = asp.move(loc, move)
-                    if len(asp.get_safe_actions(board, next_loc)) <= 2:
-                        if len(asp.get_safe_actions(board, next_loc)) > most_moves:
-                            best_move = move
-                            most_moves = len(asp.get_safe_actions(board, next_loc))
-
+                best_move = possibilities[0]
         return best_move
 
     def cleanup(self):
