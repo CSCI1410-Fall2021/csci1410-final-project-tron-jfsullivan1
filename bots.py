@@ -12,7 +12,6 @@ import random, math
 class StudentBot:
     """ Write your student bot here"""
 
-
     def __distance_helper(self, state, player_loc):
 
         # (x, y) coordinate pairs
@@ -72,24 +71,24 @@ class StudentBot:
 
         rows = np.shape(board_arr)[0]
         cols = np.shape(board_arr)[1]
+        exclusive_player_score = 0
+        exclusive_opp_score = 0
         for row in range(1, rows - 1):
             for col in range(1, cols - 1):
+                if dist_for_player[row, col] != 10000 and dist_for_opp[row, col] == 10000:
+                    exclusive_player_score += 1
+                elif dist_for_player[row, col] == 10000 and dist_for_opp[row, col] != 10000:
+                    exclusive_opp_score += 1
                 if dist_for_player[row, col] < dist_for_opp[row, col]:
                     player_score += 1
                 elif dist_for_opp[row, col] < dist_for_player[row, col]:
                     opp_score += 1
-        # dist_for_player = dist_for_player[1: -1, 1: -1]
-        # dist_for_opp = dist_for_opp[1: -1, 1: -1]
 
-        # diff_array = dist_for_opp - dist_for_player
-
-        # player_score_arr = (diff_array > 0)
-        # opp_score_arr = (diff_array < 0)
-        # player_score = np.sum(player_score_arr)
-        # opp_score = np.sum(opp_score_arr)
-
+        exclusive_player_score = self.sigmoid((exclusive_player_score) / (exclusive_player_score+exclusive_opp_score))
         player_score = self.sigmoid((player_score) / (player_score+opp_score))
-        return player_score
+
+        final_score = (0.3 * player_score) + (0.7 * exclusive_player_score)
+        return final_score
     
     def sigmoid(self, x):
         return (1/(1+math.exp(-x)))
@@ -102,22 +101,6 @@ class StudentBot:
         To get started, you can get the current
         state by calling asp.get_start_state()
         """
-
-        #locs = state.player_locs
-        #board = state.board
-        #ptm = state.ptm
-        #loc = locs[ptm]
-        #possibilities = list(TronProblem.get_safe_actions(board, loc))
-        #if not possibilities:
-         #   return "L"
-        #best_move = possibilities[0]
-        #most_moves = -1
-        #for move in possibilities:
-           # next_loc = TronProblem.move(loc, move)
-           # if len(TronProblem.get_safe_actions(board, next_loc)) <= 2:
-              #  if len(TronProblem.get_safe_actions(board, next_loc)) > most_moves:
-               #     best_move = move
-                #    most_moves = len(TronProblem.get_safe_actions(board, next_loc))
 
         best_move = self.alpha_beta_cutoff(asp, 7, self.heuristic_func)
         if (asp.is_terminal_state(asp.transition(asp.get_start_state(), best_move))):
