@@ -12,24 +12,52 @@ import random, math
 class StudentBot:
     """ Write your student bot here"""
 
-    def __distance_helper(self, state, player_loc):
+    # def bfs(problem):
 
-        # (x, y) coordinate pairs
+    #     frontier = Queue()
+    #     visited = set()
+
+    #     frontier.put(problem.get_start_state())
+    #     path = []
+    #     while frontier:
+    #         full_path = frontier.get()
+    #         current_node = full_path
+            
+    #         if current_node in visited:
+    #             continue
+    #         else:
+    #             visited.add(current_node)
+    #             path.append(current_node)
+
+    #         if problem.is_goal_state(current_node):
+    #             return path
+            
+    #         for node in problem.get_successors(current_node):
+    #             frontier.put(node)
+
+    def __distance_helper(self, state, player_loc, goal):
+
+    #     # (x, y) coordinate pairs
         queue = Queue()
         queue.append(player_loc)
 
-        # {Coordinate: Distance} pairs
-        distance_arr = np.full(np.shape(state.board), 10000)
-        distance_arr[player_loc[0], player_loc[1]] = 0
+    #     # {Coordinate: Distance} pairs
+    #     distance_arr = np.full(np.shape(state.board), 10000)
+        distances = {}
+        distances[player_loc] = 0
 
-        # (x, y) coordinate pairs
+    #     # (x, y) coordinate pairs
         visited = set()
-
+    
         while queue:
             current_loc = queue.pop()
             visited.add(current_loc)
 
+            if current_loc == goal:
+                return distances[current_loc]
+
             safe_actions = TronProblem.get_safe_actions(state.board, current_loc)
+
             for action in safe_actions:
                 next_coord = None
                 if action == 'U':
@@ -43,9 +71,10 @@ class StudentBot:
 
                 if next_coord not in visited:
                     queue.append(next_coord)
-                    distance_arr[next_coord[0], next_coord[1]] = distance_arr[current_loc[0], current_loc[1]] + 1
+                    distances[next_coord] = distances[current_loc] + 1
 
-        return distance_arr
+        return 10000
+    #     return distance_arr
 
     def heuristic_func(self, state, asp):
         if asp.is_terminal_state(state):
@@ -65,9 +94,11 @@ class StudentBot:
         board_arr = np.array(board)
         index_player = np.where(board_arr == player_symbol)
         index_opp = np.where(board_arr == opp_symbol)
-
-        dist_for_player = self.__distance_helper(state, (index_player[0][0], index_player[1][0]))
-        dist_for_opp = self.__distance_helper(state, (index_opp[0][0], index_opp[1][0]))
+        
+        player_coord = (index_player[0][0], index_player[1][0])
+        opp_coord = (index_opp[0][0], index_opp[1][0])
+        # dist_for_player = self.__distance_helper(state, (index_player[0][0], index_player[1][0]))
+        # dist_for_opp = self.__distance_helper(state, (index_opp[0][0], index_opp[1][0]))
 
         rows = np.shape(board_arr)[0]
         cols = np.shape(board_arr)[1]
@@ -75,19 +106,33 @@ class StudentBot:
         exclusive_opp_score = 0
         for row in range(1, rows - 1):
             for col in range(1, cols - 1):
-                if dist_for_player[row, col] != 10000 and dist_for_opp[row, col] == 10000:
-                    exclusive_player_score += 1
-                elif dist_for_player[row, col] == 10000 and dist_for_opp[row, col] != 10000:
-                    exclusive_opp_score += 1
-                if dist_for_player[row, col] < dist_for_opp[row, col]:
-                    player_score += 1
-                elif dist_for_opp[row, col] < dist_for_player[row, col]:
-                    opp_score += 1
+                if board[row, col] == ' ':
+                    curr_player_dist = self.__distance_helper(state, player_coord, (row, col))
+                    curr_opp_dist = self.__distance_helper(state, opp_coord, (row, col))
+                    
+                    if curr_player_dist < curr_opp_dist:
+                        player_score += 1
+                    elif curr_player_dist > curr_opp_dist:
+                        opp_score += 1
+                    
+                    if curr_player_dist != 10000 and curr_opp_dist == 10000:
+                        exclusive_player_score += 1
+                    elif curr_player_dist == 10000 and curr_opp_dist != 10000:
+                        exclusive_opp_score += 1
+
+                # if dist_for_player[row, col] != 10000 and dist_for_opp[row, col] == 10000:
+                #     exclusive_player_score += 1
+                # elif dist_for_player[row, col] == 10000 and dist_for_opp[row, col] != 10000:
+                #     exclusive_opp_score += 1
+                # if dist_for_player[row, col] < dist_for_opp[row, col]:
+                #     player_score += 1
+                # elif dist_for_opp[row, col] < dist_for_player[row, col]:
+                #     opp_score += 1
 
         exclusive_player_score = self.sigmoid((exclusive_player_score) / (exclusive_player_score+exclusive_opp_score))
         player_score = self.sigmoid((player_score) / (player_score+opp_score))
 
-        final_score = (0.3 * player_score) + (0.7 * exclusive_player_score)
+        final_score = (1 * player_score) + (0 * exclusive_player_score)
         return final_score
     
     def sigmoid(self, x):
@@ -140,7 +185,8 @@ class StudentBot:
         '''
 
         start = asp.get_start_state()
-        _, move = self.max_ab_cutoff(asp, start, -math.inf, math.inf, cutoff_ply, heuristic_func)
+        score, move = self.max_ab_cutoff(asp, start, -math.inf, math.inf, cutoff_ply, heuristic_func)
+        print(score)
         return move
 
     def max_ab_cutoff(self, asp, state, alpha, beta, ply, heuristic_func):
