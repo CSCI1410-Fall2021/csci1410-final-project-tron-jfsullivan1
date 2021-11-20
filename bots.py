@@ -26,8 +26,7 @@ class StudentBot:
         visited = set()
         visited.add(player_loc)
         while queue:
-            current_loc = queue.pop()
-            
+            current_loc = queue.popleft()
 
             safe_actions = TronProblem.get_safe_actions(state.board, current_loc)
             for action in safe_actions:
@@ -45,10 +44,7 @@ class StudentBot:
                     queue.append(next_coord)
                     visited.add(next_coord)
                     distance_arr[next_coord[0], next_coord[1]] = distance_arr[current_loc[0], current_loc[1]] + 1
-        
-        
-        print(distance_arr)
-        print("\n")
+
         return distance_arr
 
     def heuristic_func(self, state, asp):
@@ -91,7 +87,7 @@ class StudentBot:
         exclusive_player_score = self.sigmoid((exclusive_player_score) / (exclusive_player_score+exclusive_opp_score))
         player_score = self.sigmoid((player_score) / (player_score+opp_score))
 
-        final_score = (0.3 * player_score) + (0.7 * exclusive_player_score)
+        final_score = player_score
         return final_score
     
     def sigmoid(self, x):
@@ -107,13 +103,13 @@ class StudentBot:
         """
 
         best_move = self.alpha_beta_cutoff(asp, 7, self.heuristic_func)
-        if (asp.is_terminal_state(asp.transition(asp.get_start_state(), best_move))):
-            board_arr = np.array(asp.get_start_state().board)
-            player_symbol = str(asp.get_start_state().player_to_move() + 1)
-            index_player = np.where(board_arr == player_symbol)
-            possibilities = TronProblem.get_safe_actions(asp.get_start_state().board, (index_player[0][0], index_player[1][0]))
-            if (possibilities):
-                best_move = possibilities.pop()
+        # if (asp.is_terminal_state(asp.transition(asp.get_start_state(), best_move))):
+        #     board_arr = np.array(asp.get_start_state().board)
+        #     player_symbol = str(asp.get_start_state().player_to_move() + 1)
+        #     index_player = np.where(board_arr == player_symbol)
+        #     possibilities = TronProblem.get_safe_actions(asp.get_start_state().board, (index_player[0][0], index_player[1][0]))
+        #     if (possibilities):
+        #         best_move = possibilities.pop()
         return best_move
 
     def cleanup(self):
