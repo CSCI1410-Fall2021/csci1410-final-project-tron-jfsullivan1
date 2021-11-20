@@ -88,7 +88,7 @@ class StudentBot:
         player_score = self.sigmoid((player_score) / (player_score+opp_score))
 
         final_score = player_score
-        return final_score
+        return final_score, dist_for_player
     
     def sigmoid(self, x):
         return (1/(1+math.exp(-x)))
@@ -103,13 +103,13 @@ class StudentBot:
         """
 
         best_move = self.alpha_beta_cutoff(asp, 7, self.heuristic_func)
-        # if (asp.is_terminal_state(asp.transition(asp.get_start_state(), best_move))):
-        #     board_arr = np.array(asp.get_start_state().board)
-        #     player_symbol = str(asp.get_start_state().player_to_move() + 1)
-        #     index_player = np.where(board_arr == player_symbol)
-        #     possibilities = TronProblem.get_safe_actions(asp.get_start_state().board, (index_player[0][0], index_player[1][0]))
-        #     if (possibilities):
-        #         best_move = possibilities.pop()
+        if (asp.is_terminal_state(asp.transition(asp.get_start_state(), best_move))):
+            board_arr = np.array(asp.get_start_state().board)
+            player_symbol = str(asp.get_start_state().player_to_move() + 1)
+            index_player = np.where(board_arr == player_symbol)
+            possibilities = TronProblem.get_safe_actions(asp.get_start_state().board, (index_player[0][0], index_player[1][0]))
+            if (possibilities):
+                best_move = possibilities.pop()
         return best_move
 
     def cleanup(self):
@@ -141,7 +141,7 @@ class StudentBot:
 
         start = asp.get_start_state()
         score, move = self.max_ab_cutoff(asp, start, -math.inf, math.inf, cutoff_ply, heuristic_func)
-        print(score)
+        print(score[1])
         return move
 
     def max_ab_cutoff(self, asp, state, alpha, beta, ply, heuristic_func):
