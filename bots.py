@@ -85,7 +85,7 @@ class StudentBot:
                     opp_score += 1
 
         exclusive_player_score = self.sigmoid((exclusive_player_score) / (exclusive_player_score+exclusive_opp_score))
-        player_score = 1 - self.sigmoid((opp_score) / (player_score+opp_score))
+        player_score = self.sigmoid((player_score) / (player_score+opp_score))
 	#print(player_score)
 	#print(dist_for_player)
         final_score = player_score
