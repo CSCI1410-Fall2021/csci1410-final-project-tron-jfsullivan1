@@ -85,10 +85,11 @@ class StudentBot:
                     opp_score += 1
 
         exclusive_player_score = self.sigmoid((exclusive_player_score) / (exclusive_player_score+exclusive_opp_score))
-        player_score = self.sigmoid((player_score) / (player_score+opp_score))
-
+        player_score = 1 - self.sigmoid((opp_score) / (player_score+opp_score))
+	#print(player_score)
+	#print(dist_for_player)
         final_score = player_score
-        return final_score, dist_for_player
+        return final_score
     
     def sigmoid(self, x):
         return (1/(1+math.exp(-x)))
@@ -140,8 +141,8 @@ class StudentBot:
         '''
 
         start = asp.get_start_state()
-        score, move = self.max_ab_cutoff(asp, start, -math.inf, math.inf, cutoff_ply, heuristic_func)
-        print(score[1])
+        score, move = self.min_ab_cutoff(asp, start, -math.inf, math.inf, cutoff_ply, heuristic_func)
+        
         return move
 
     def max_ab_cutoff(self, asp, state, alpha, beta, ply, heuristic_func):
@@ -149,9 +150,9 @@ class StudentBot:
             maximizing_player = asp.get_start_state().player_to_move()
             terminal_tuple = asp.evaluate_state(state)
             if(maximizing_player == 0):
-                return terminal_tuple[0]*100, None
-            else:
                 return terminal_tuple[1]*100, None
+            else:
+                return terminal_tuple[0]*100, None
         if ply <= 0:
             return heuristic_func(state, asp), None
         value = -math.inf
@@ -171,9 +172,9 @@ class StudentBot:
             maximizing_player = asp.get_start_state().player_to_move()
             terminal_tuple = asp.evaluate_state(state)
             if(maximizing_player == 0):
-                return terminal_tuple[0]*100, None
-            else:
                 return terminal_tuple[1]*100, None
+            else:
+                return terminal_tuple[0]*100, None
         if ply <= 0:
             return heuristic_func(state, asp), None
         value = math.inf
